@@ -1,27 +1,36 @@
 # EvoFit Pro
 
-Projeto MVP em React + Vite para aplicativo de personal trainer.
+Sistema completo em React para personal trainer, com visual premium e dados persistindo no navegador.
 
-## O que já tem
-- Dashboard do personal
-- Cadastro simples de alunos
-- Área de treinos
-- Evolução física
+## Módulos
+- Dashboard
+- Alunos
+- Avaliações físicas
+- Treinos
 - Agenda
+- Check-ins
 - Financeiro
-- Simulação da área do aluno
+- Área do aluno
+- Configurações
 
-## Como rodar
+## Rodar localmente
 ```bash
 npm install
 npm run dev
 ```
 
-## Próximos passos sugeridos
-- Conectar Supabase
-- Login real
-- Banco PostgreSQL
-- Upload de fotos e vídeos
-- Cadastro completo de alunos
-- Check-in com persistência
-- Integração com WhatsApp
+## Build
+```bash
+npm run build
+```
+
+## Deploy no Coolify
+Use:
+- Build Pack: Nixpacks
+- Static Site: ON
+- Install Command: `npm install`
+- Build Command: `npm run build`
+- Publish Directory: `dist`
+
+## Observação
+Esta versão salva os dados no `localStorage` do navegador. Para virar sistema online multiusuário, o próximo passo é integrar Supabase para autenticação, banco e storage.
