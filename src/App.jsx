@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Activity,
   BarChart3,
@@ -27,6 +27,11 @@ import {
   BadgeCheck,
   NotebookPen,
   Trophy,
+  Cloud,
+  CloudOff,
+  LoaderCircle,
+  LogOut,
+  ShieldCheck,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -39,6 +44,7 @@ import {
   BarChart,
   Bar,
 } from "recharts";
+import { isSupabaseConfigured, supabase } from "./lib/supabase";
 
 const navItems = [
   { key: "dashboard", label: "Dashboard", icon: Home },
@@ -217,6 +223,54 @@ const initialProfile = {
   mensagemBoasVindas: "Bem-vindo ao seu novo ciclo. Vamos evoluir com constância.",
 };
 
+
+const STORAGE_KEYS = {
+  students: "evofit_students_v2",
+  evaluations: "evofit_evaluations_v2",
+  exercises: "evofit_exercises_v2",
+  workouts: "evofit_workouts_v2",
+  agenda: "evofit_agenda_v2",
+  payments: "evofit_payments_v2",
+  checkins: "evofit_checkins_v2",
+  profile: "evofit_profile_v2",
+};
+
+const DEFAULT_SNAPSHOT = {
+  [STORAGE_KEYS.students]: initialStudents,
+  [STORAGE_KEYS.evaluations]: initialEvaluations,
+  [STORAGE_KEYS.exercises]: initialExercises,
+  [STORAGE_KEYS.workouts]: initialWorkouts,
+  [STORAGE_KEYS.agenda]: initialAgenda,
+  [STORAGE_KEYS.payments]: initialPayments,
+  [STORAGE_KEYS.checkins]: initialCheckins,
+  [STORAGE_KEYS.profile]: initialProfile,
+};
+
+function clearLocalSnapshot() {
+  Object.keys(STORAGE_KEYS).forEach((key) => window.localStorage.removeItem(STORAGE_KEYS[key]));
+}
+
+function writeSnapshotToLocalStorage(payload = DEFAULT_SNAPSHOT) {
+  Object.entries(DEFAULT_SNAPSHOT).forEach(([storageKey, fallbackValue]) => {
+    const value = payload?.[storageKey] ?? fallbackValue;
+    window.localStorage.setItem(storageKey, JSON.stringify(value));
+  });
+}
+
+function readSnapshotFromLocalStorage() {
+  const snapshot = {};
+  Object.entries(DEFAULT_SNAPSHOT).forEach(([storageKey, fallbackValue]) => {
+    try {
+      const raw = window.localStorage.getItem(storageKey);
+      snapshot[storageKey] = raw ? JSON.parse(raw) : fallbackValue;
+    } catch {
+      snapshot[storageKey] = fallbackValue;
+    }
+  });
+  return snapshot;
+}
+
+
 function useLocalStorageState(key, initialValue) {
   const [value, setValue] = useState(() => {
     try {
@@ -229,6 +283,7 @@ function useLocalStorageState(key, initialValue) {
 
   useEffect(() => {
     window.localStorage.setItem(key, JSON.stringify(value));
+    window.dispatchEvent(new CustomEvent("evofit-storage-update", { detail: { key, value } }));
   }, [key, value]);
 
   return [value, setValue];
@@ -1329,7 +1384,7 @@ function SettingsView({ profile, setProfile }) {
   );
 }
 
-export default function App() {
+function DashboardApp({ cloudStatus = "demo", onSignOut = null, session = null }) {
   const [students, setStudents] = useLocalStorageState("evofit_students_v2", initialStudents);
   const [evaluations, setEvaluations] = useLocalStorageState("evofit_evaluations_v2", initialEvaluations);
   const [exercises, setExercises] = useLocalStorageState("evofit_exercises_v2", initialExercises);
@@ -1415,8 +1470,8 @@ export default function App() {
               </div>
             </div>
             <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-              <p className="text-sm text-zinc-300">Esta versão salva no navegador.</p>
-              <p className="mt-2 text-sm leading-6 text-zinc-400">Pode testar tudo e jogar no Coolify agora. Na próxima etapa, ligamos banco e login real.</p>
+              <p className="text-sm text-zinc-300">{cloudStatus === "online" ? "Supabase conectado" : cloudStatus === "syncing" ? "Sincronizando com Supabase" : cloudStatus === "error" ? "Falha de sincronização" : "Modo demo no navegador"}.</p>
+              <p className="mt-2 text-sm leading-6 text-zinc-400">{cloudStatus === "online" ? "Seu sistema está autenticado e salvando dados na nuvem por usuário." : cloudStatus === "syncing" ? "Os dados estão sendo enviados para a nuvem agora." : cloudStatus === "error" ? "Os dados locais continuam intactos, mas a nuvem precisa de atenção." : "Pode testar tudo agora. Quando configurar o .env, vira sistema online com login real."}</p>
             </div>
           </div>
         </aside>
@@ -1435,8 +1490,16 @@ export default function App() {
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="hidden rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-zinc-300 md:block">Quinta-feira • 19/03/2026</div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white">{profile.personalNome}</div>
+                <div className="hidden rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-zinc-300 md:flex md:items-center md:gap-2">
+                  {cloudStatus === "online" ? <Cloud className="h-4 w-4 text-emerald-300" /> : cloudStatus === "syncing" ? <LoaderCircle className="h-4 w-4 animate-spin text-cyan-300" /> : <CloudOff className="h-4 w-4 text-amber-300" />}
+                  <span>{cloudStatus === "online" ? "Supabase online" : cloudStatus === "syncing" ? "Sincronizando" : cloudStatus === "error" ? "Erro na nuvem" : "Modo demo"}</span>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white">{session?.user?.email || profile.personalNome}</div>
+                {onSignOut ? (
+                  <button onClick={onSignOut} className="rounded-2xl border border-white/10 bg-white/5 p-3 text-white transition hover:bg-white/10" title="Sair">
+                    <LogOut className="h-4 w-4" />
+                  </button>
+                ) : null}
               </div>
             </div>
           </header>
@@ -1474,4 +1537,250 @@ export default function App() {
       </div>
     </div>
   );
+}
+
+function AuthCard({ mode, setMode, form, setForm, onSubmit, loading, error, info }) {
+  return (
+    <Card className="w-full max-w-md p-6">
+      <div className="mb-6">
+        <div className="mb-4 inline-flex rounded-2xl bg-emerald-400 px-4 py-2 font-black text-zinc-950">EV</div>
+        <h1 className="text-3xl font-bold text-white">EvoFit Pro</h1>
+        <p className="mt-2 text-sm text-zinc-400">{mode === "signin" ? "Entre na sua conta para abrir o painel online." : "Crie sua conta para começar a usar o sistema com Supabase."}</p>
+      </div>
+
+      <div className="mb-4 grid grid-cols-2 gap-2 rounded-2xl border border-white/10 bg-black/20 p-1">
+        <button onClick={() => setMode("signin")} className={`rounded-2xl px-4 py-3 text-sm font-semibold transition ${mode === "signin" ? "bg-emerald-400 text-zinc-950" : "text-zinc-300"}`}>Entrar</button>
+        <button onClick={() => setMode("signup")} className={`rounded-2xl px-4 py-3 text-sm font-semibold transition ${mode === "signup" ? "bg-emerald-400 text-zinc-950" : "text-zinc-300"}`}>Criar conta</button>
+      </div>
+
+      <form onSubmit={onSubmit} className="space-y-4">
+        <Input label="E-mail" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="voce@exemplo.com" />
+        <Input label="Senha" type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="Mínimo de 6 caracteres" />
+        {mode === "signup" ? <Input label="Nome do personal" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Seu nome" /> : null}
+        <Button type="submit" className="w-full">
+          {loading ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+          {mode === "signin" ? "Entrar" : "Criar conta"}
+        </Button>
+      </form>
+
+      {error ? <p className="mt-4 rounded-2xl border border-rose-400/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-300">{error}</p> : null}
+      {info ? <p className="mt-4 rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-3 text-sm text-cyan-300">{info}</p> : null}
+    </Card>
+  );
+}
+
+export default function App() {
+  const [session, setSession] = useState(null);
+  const [authReady, setAuthReady] = useState(!isSupabaseConfigured);
+  const [hydrated, setHydrated] = useState(!isSupabaseConfigured);
+  const [cloudStatus, setCloudStatus] = useState(isSupabaseConfigured ? "syncing" : "demo");
+  const [authMode, setAuthMode] = useState("signin");
+  const [authForm, setAuthForm] = useState({ email: "", password: "", name: "" });
+  const [authLoading, setAuthLoading] = useState(false);
+  const [authError, setAuthError] = useState("");
+  const [authInfo, setAuthInfo] = useState("");
+  const saveTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured || !supabase) {
+      writeSnapshotToLocalStorage(readSnapshotFromLocalStorage());
+      return;
+    }
+
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!mounted) return;
+      setSession(data.session ?? null);
+      setAuthReady(true);
+    });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession ?? null);
+      setAuthReady(true);
+    });
+
+    return () => {
+      mounted = false;
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured) {
+      setHydrated(true);
+      setCloudStatus("demo");
+      return;
+    }
+
+    if (!authReady) return;
+
+    if (!session?.user?.id) {
+      clearLocalSnapshot();
+      setHydrated(false);
+      setCloudStatus("syncing");
+      return;
+    }
+
+    let cancelled = false;
+
+    async function hydrateFromCloud() {
+      setHydrated(false);
+      setCloudStatus("syncing");
+      const { data, error } = await supabase
+        .from("app_snapshots")
+        .select("payload")
+        .eq("user_id", session.user.id)
+        .maybeSingle();
+
+      if (cancelled) return;
+
+      if (error) {
+        console.error(error);
+        writeSnapshotToLocalStorage(readSnapshotFromLocalStorage());
+        setCloudStatus("error");
+        setHydrated(true);
+        return;
+      }
+
+      const payload = data?.payload && Object.keys(data.payload).length ? data.payload : DEFAULT_SNAPSHOT;
+      writeSnapshotToLocalStorage(payload);
+
+      if (!data) {
+        const { error: seedError } = await supabase.from("app_snapshots").upsert({ user_id: session.user.id, payload });
+        if (seedError) {
+          console.error(seedError);
+          setCloudStatus("error");
+        } else {
+          setCloudStatus("online");
+        }
+      } else {
+        setCloudStatus("online");
+      }
+
+      setHydrated(true);
+    }
+
+    hydrateFromCloud();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authReady, session?.user?.id]);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured || !session?.user?.id || !hydrated) return;
+
+    function scheduleSync() {
+      window.clearTimeout(saveTimeoutRef.current);
+      saveTimeoutRef.current = window.setTimeout(async () => {
+        setCloudStatus("syncing");
+        const payload = readSnapshotFromLocalStorage();
+        const { error } = await supabase.from("app_snapshots").upsert({ user_id: session.user.id, payload });
+        if (error) {
+          console.error(error);
+          setCloudStatus("error");
+          return;
+        }
+        setCloudStatus("online");
+      }, 600);
+    }
+
+    window.addEventListener("evofit-storage-update", scheduleSync);
+    return () => {
+      window.removeEventListener("evofit-storage-update", scheduleSync);
+      window.clearTimeout(saveTimeoutRef.current);
+    };
+  }, [hydrated, session?.user?.id]);
+
+  async function handleAuthSubmit(event) {
+    event.preventDefault();
+    setAuthLoading(true);
+    setAuthError("");
+    setAuthInfo("");
+
+    try {
+      if (authMode === "signin") {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: authForm.email,
+          password: authForm.password,
+        });
+        if (error) throw error;
+      } else {
+        const { data, error } = await supabase.auth.signUp({
+          email: authForm.email,
+          password: authForm.password,
+          options: {
+            data: {
+              name: authForm.name || "Personal",
+            },
+          },
+        });
+        if (error) throw error;
+        if (!data.session) {
+          setAuthInfo("Conta criada. Se o projeto exigir confirmação de e-mail, confirme sua caixa de entrada antes de entrar.");
+          setAuthMode("signin");
+        }
+      }
+    } catch (error) {
+      setAuthError(error.message || "Não foi possível autenticar agora.");
+    } finally {
+      setAuthLoading(false);
+    }
+  }
+
+  async function handleSignOut() {
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
+    clearLocalSnapshot();
+    setSession(null);
+    setHydrated(false);
+    setCloudStatus(isSupabaseConfigured ? "syncing" : "demo");
+  }
+
+  if (!isSupabaseConfigured) {
+    return <DashboardApp cloudStatus="demo" />;
+  }
+
+  if (!authReady) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(52,211,153,0.14),_transparent_28%),linear-gradient(180deg,#09090b_0%,#111113_100%)] px-4">
+        <div className="flex items-center gap-3 rounded-3xl border border-white/10 bg-white/5 px-6 py-4 text-white">
+          <LoaderCircle className="h-5 w-5 animate-spin text-emerald-300" />
+          Carregando autenticação...
+        </div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(52,211,153,0.14),_transparent_28%),linear-gradient(180deg,#09090b_0%,#111113_100%)] px-4">
+        <AuthCard
+          mode={authMode}
+          setMode={setAuthMode}
+          form={authForm}
+          setForm={setAuthForm}
+          onSubmit={handleAuthSubmit}
+          loading={authLoading}
+          error={authError}
+          info={authInfo}
+        />
+      </div>
+    );
+  }
+
+  if (!hydrated) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(52,211,153,0.14),_transparent_28%),linear-gradient(180deg,#09090b_0%,#111113_100%)] px-4">
+        <div className="rounded-3xl border border-white/10 bg-white/5 px-6 py-5 text-center">
+          <LoaderCircle className="mx-auto h-6 w-6 animate-spin text-emerald-300" />
+          <p className="mt-3 font-semibold text-white">Preparando seus dados</p>
+          <p className="mt-1 text-sm text-zinc-400">Conectando seu painel ao Supabase.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return <DashboardApp cloudStatus={cloudStatus} onSignOut={handleSignOut} session={session} />;
 }
