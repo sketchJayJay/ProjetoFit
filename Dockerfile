@@ -1,8 +1,8 @@
 # Build stage
-FROM node:22.16.0-alpine AS builder
+FROM node:22.16.0-bookworm-slim AS builder
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --no-audit --no-fund
 COPY . .
 RUN npm run build
 
