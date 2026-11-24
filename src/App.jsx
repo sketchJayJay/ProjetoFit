@@ -122,7 +122,7 @@ const initialStudents = [
     status: "Ativo",
     genero: "Feminino",
     nascimento: "2001-12-02",
-    academia: "Studio EVO",
+    academia: "Studio Otávio Garcez",
     restricoes: "Sem restrições relevantes.",
     observacoes: "Excelente constância e evolução rápida.",
     entrada: "2025-12-15",
@@ -140,7 +140,7 @@ const initialStudents = [
     status: "Ativo",
     genero: "Masculino",
     nascimento: "1992-06-05",
-    academia: "Studio EVO",
+    academia: "Studio Otávio Garcez",
     restricoes: "Baixa mobilidade de tornozelo.",
     observacoes: "Boa evolução no condicionamento.",
     entrada: "2026-01-20",
@@ -389,7 +389,7 @@ const initialAgenda = [
     data: today(),
     hora: "17:00",
     tipo: "Treino presencial",
-    local: "Studio EVO",
+    local: "Studio Otávio Garcez",
     status: "Confirmado",
   },
   {
@@ -398,7 +398,7 @@ const initialAgenda = [
     data: "2026-03-20",
     hora: "19:00",
     tipo: "Reavaliação",
-    local: "Studio EVO",
+    local: "Studio Otávio Garcez",
     status: "Pendente",
   },
 ];
@@ -479,11 +479,11 @@ const initialCheckins = [
 ];
 
 const initialProfile = {
-  nomeNegocio: "EvoFit Pro Studio",
-  personalNome: "Jater Jr",
-  cref: "CREF 000000-G/MG",
-  whatsapp: "(32) 98428-5414",
-  email: "contato@evofitpro.com",
+  nomeNegocio: "Otávio Garcez Personal",
+  personalNome: "Otávio Garcez",
+  cref: "",
+  whatsapp: "",
+  email: "",
   planoPadrao: "Híbrido",
   mensagemBoasVindas:
     "Bem-vindo ao seu novo ciclo. Vamos evoluir com constância.",
@@ -571,7 +571,16 @@ function useLocalStorageState(key, initialValue) {
   const [value, setValue] = useState(() => {
     try {
       const raw = window.localStorage.getItem(cacheKey(key));
-      return raw ? JSON.parse(raw) : initialValue;
+      const stored = raw ? JSON.parse(raw) : initialValue;
+      // Rebrand only the previous demo identity, never an authenticated profile.
+      if (
+        cacheOwner === "demo" &&
+        key === STORAGE_KEYS.profile &&
+        stored?.nomeNegocio === "EvoFit Pro Studio" &&
+        stored?.personalNome === "Jater Jr"
+      )
+        return { ...stored, ...initialProfile };
+      return stored;
     } catch {
       return initialValue;
     }
@@ -630,9 +639,9 @@ function SectionTitle({ title, subtitle, action }) {
 function Badge({ children, tone = "default" }) {
   const tones = {
     default: "border-white/10 bg-white/5 text-zinc-200",
-    success: "border-emerald-400/20 bg-emerald-400/10 text-emerald-300",
+    success: "border-orange-400/20 bg-orange-400/10 text-orange-300",
     warn: "border-amber-400/20 bg-amber-400/10 text-amber-300",
-    info: "border-cyan-400/20 bg-cyan-400/10 text-cyan-300",
+    info: "border-orange-400/20 bg-orange-400/10 text-orange-300",
     danger: "border-rose-400/20 bg-rose-400/10 text-rose-300",
   };
   return (
@@ -651,9 +660,9 @@ function StatCard({ title, value, meta, icon: Icon }) {
         <div>
           <p className="text-sm text-zinc-400">{title}</p>
           <h3 className="mt-2 text-3xl font-bold text-white">{value}</h3>
-          <p className="mt-2 text-sm text-emerald-400">{meta}</p>
+          <p className="mt-2 text-sm text-orange-400">{meta}</p>
         </div>
-        <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-3 text-emerald-300">
+        <div className="rounded-2xl border border-orange-400/20 bg-orange-400/10 p-3 text-orange-300">
           <Icon className="h-6 w-6" />
         </div>
       </div>
@@ -740,7 +749,7 @@ function Button({
   className = "",
 }) {
   const styles = {
-    primary: "bg-emerald-400 text-zinc-950 hover:opacity-90",
+    primary: "bg-orange-400 text-zinc-950 hover:opacity-90",
     secondary: "border border-white/10 bg-white/5 text-white hover:bg-white/10",
   };
   return (
@@ -926,20 +935,20 @@ function EvaluationsView({
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
-                  <XAxis dataKey="data" stroke="#a1a1aa" />
-                  <YAxis stroke="#a1a1aa" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
+                  <XAxis dataKey="data" stroke="#aaaaaa" />
+                  <YAxis stroke="#aaaaaa" />
                   <Tooltip />
                   <Line
                     type="monotone"
                     dataKey="peso"
-                    stroke="#34d399"
+                    stroke="#ff6a00"
                     strokeWidth={3}
                   />
                   <Line
                     type="monotone"
                     dataKey="gordura"
-                    stroke="#22d3ee"
+                    stroke="#ffc08a"
                     strokeWidth={3}
                   />
                 </LineChart>
@@ -1367,7 +1376,7 @@ function AgendaView({ students, agenda, setAgenda }) {
     data: today(),
     hora: "08:00",
     tipo: "Avaliação física",
-    local: "Studio EVO",
+    local: "Studio Otávio Garcez",
     status: "Confirmado",
   });
 
@@ -1654,8 +1663,8 @@ function CheckinsView({ students, checkins, setCheckins }) {
                         {item.observacoes}
                       </p>
                     </div>
-                    <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-3">
-                      <p className="text-xs uppercase tracking-wide text-emerald-300">
+                    <div className="rounded-2xl border border-orange-400/20 bg-orange-400/10 p-3">
+                      <p className="text-xs uppercase tracking-wide text-orange-300">
                         Personal
                       </p>
                       <p className="mt-2 text-sm text-white">
@@ -1993,7 +2002,7 @@ function SettingsView({ profile, setProfile }) {
                 className="rounded-2xl border border-white/10 bg-black/20 p-4"
               >
                 <div className="flex items-center gap-3">
-                  <div className="rounded-2xl bg-emerald-400/10 p-2 text-emerald-300">
+                  <div className="rounded-2xl bg-orange-400/10 p-2 text-orange-300">
                     <Icon className="h-5 w-5" />
                   </div>
                   <p className="font-semibold text-white">{item.title}</p>
@@ -2004,8 +2013,8 @@ function SettingsView({ profile, setProfile }) {
           })}
         </div>
 
-        <div className="mt-6 rounded-3xl border border-emerald-400/20 bg-emerald-400/10 p-5">
-          <p className="text-sm text-emerald-300">Acompanhamento individual</p>
+        <div className="mt-6 rounded-3xl border border-orange-400/20 bg-orange-400/10 p-5">
+          <p className="text-sm text-orange-300">Acompanhamento individual</p>
           <p className="mt-2 text-sm leading-6 text-zinc-200">
             Personalize o painel e crie convites em Alunos e painéis. O acesso
             online usa o e-mail autorizado e a senha do aluno.
@@ -2026,7 +2035,7 @@ const storage = {
     ...Object.fromEntries(Object.values(STORAGE_KEYS).map((key) => [key, []])),
     [STORAGE_KEYS.profile]: {
       ...initialProfile,
-      nomeNegocio: "Meu espaço de treino",
+      nomeNegocio: initialProfile.nomeNegocio,
       personalNome: user.user_metadata?.name || "Personal",
       email: user.email || "",
       cref: "",
@@ -2312,7 +2321,7 @@ function DashboardApp({ cloudStatus = "demo", onSignOut, session, flush }) {
                 );
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = `EvoFit-backup-${today()}.json`;
+                a.download = `OG-Personal-backup-${today()}.json`;
                 a.click();
                 setTimeout(() => URL.revokeObjectURL(url), 1000);
               }}
@@ -2465,7 +2474,7 @@ function DashboardApp({ cloudStatus = "demo", onSignOut, session, flush }) {
         <main className="coach-content">{content()}</main>
         <footer className="coach-footer">
           <span>
-            EVOFIT PRO <b>© {new Date().getFullYear()}</b>
+            OTÁVIO GARCEZ PERSONAL <b>© {new Date().getFullYear()}</b>
           </span>
           <span>O próximo passo de cada aluno começa com você.</span>
         </footer>

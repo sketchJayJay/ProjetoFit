@@ -1,6 +1,6 @@
-# EvoFit Pro 2 · Cada aluno, uma evolução
+# Otávio Garcez Personal · Pacote para GitHub e Coolify
 
-Sistema para personal trainer presencial, online e híbrido, com painel do personal e acesso individual dos alunos. React + Vite + Supabase. Os módulos e cadastros da versão anterior são preservados.
+Versão personalizada com a logo original de Otávio Garcez Personal e visual em laranja e preto. Sistema para personal trainer presencial, online e híbrido, com painel do personal e acesso individual dos alunos. React + Vite + Supabase. Os módulos e cadastros da versão anterior são preservados.
 
 ## O que mudou
 
@@ -43,7 +43,7 @@ Se outra sessão alterou os mesmos registros, a gravação é interrompida para 
 ## Instalação nova do banco
 
 1. Crie um projeto Supabase.
-2. Execute `supabase/schema.sql` e, em seguida, `supabase/upgrade-v2.sql`.
+2. Execute `supabase/INSTALACAO_COMPLETA.sql` no SQL Editor (já reúne a estrutura inicial e a atualização).
 3. Em Authentication, configure a URL do site e as Redirect URLs do domínio publicado, incluindo `https://SEU-DOMINIO/**` para a confirmação da conta do aluno.
 4. Copie `.env.example` para `.env` e preencha:
 

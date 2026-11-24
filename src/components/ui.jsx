@@ -5,13 +5,13 @@ import { initials } from "../lib/model";
 export function Brand({ small = false }) {
   return (
     <div className={`brand ${small ? "small" : ""}`}>
-      <span className="brand-symbol">
-        <Activity size={24} />
-      </span>
-      <span>
-        EVOFIT<span className="brand-pro">PRO</span>
-        <small>EVOLUÇÃO EM MOVIMENTO</small>
-      </span>
+      <img
+        className="brand-logo"
+        src="/logo-otavio-garcez.jpg"
+        alt="Otávio Garcez Personal"
+        width="532"
+        height="243"
+      />
     </div>
   );
 }

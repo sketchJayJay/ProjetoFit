@@ -98,7 +98,7 @@ function AuthScreen({ portal, invite }) {
           </p>
         </div>
         <span className="auth-footnote">
-          EVOFIT PRO · ACOMPANHAMENTO INDIVIDUAL
+          OTÁVIO GARCEZ PERSONAL · ACOMPANHAMENTO INDIVIDUAL
         </span>
       </div>
       <Panel className="auth-card">
@@ -192,7 +192,7 @@ function AuthScreen({ portal, invite }) {
 }
 function PillLabel({ portal }) {
   return (
-    <span className="pill lime">
+    <span className="pill accent">
       <ShieldCheck size={14} />
       {portal ? "ESPAÇO DO ALUNO" : "PAINEL DO PERSONAL"}
     </span>
@@ -202,7 +202,7 @@ function Loading({ text = "Preparando seu espaço…" }) {
   return (
     <div className="gateway-state">
       <Brand />
-      <LoaderCircle className="spin lime-text" size={28} />
+      <LoaderCircle className="spin accent-text" size={28} />
       <p>{text}</p>
     </div>
   );
@@ -502,7 +502,7 @@ function CoachCloud({ session, storage, render }) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "EvoFit-copia-local.json";
+    a.download = "OG-Personal-copia-local.json";
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }

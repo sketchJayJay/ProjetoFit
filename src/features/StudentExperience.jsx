@@ -191,7 +191,7 @@ function TrainingSession({ workout, student, scope, onSave, onClose }) {
           <h3>{workout.foco}</h3>
           <p>Registre a carga e marque cada série que terminar.</p>
         </div>
-        <Pill tone="lime">
+        <Pill tone="accent">
           {done}/{total} séries
         </Pill>
       </div>
@@ -233,7 +233,7 @@ function TrainingSession({ workout, student, scope, onSave, onClose }) {
                 <p>{exercise.prescription}</p>
               </div>
               {draft.exerciseSets[i].every((s) => s.done) && (
-                <CheckCircle2 className="lime-text" size={21} />
+                <CheckCircle2 className="accent-text" size={21} />
               )}
             </div>
             <div className="set-header">
@@ -756,7 +756,7 @@ export default function StudentExperience({
             <div className="page-title">
               <span className="eyebrow">UM TREINO. UM PASSO À FRENTE.</span>
               <h1>
-                Seu espaço de treino<span className="lime-text">.</span>
+                Seu espaço de treino<span className="accent-text">.</span>
               </h1>
               <p>
                 Fichas preparadas pelo seu personal, com seu objetivo em cada
@@ -771,7 +771,7 @@ export default function StudentExperience({
                       <span className="large-index">
                         {String(i + 1).padStart(2, "0")}
                       </span>
-                      <Pill tone="lime">
+                      <Pill tone="accent">
                         {completedToday(w.id)
                           ? "Concluído hoje"
                           : w.status || "Ativo"}
@@ -851,7 +851,7 @@ export default function StudentExperience({
             <div className="page-title">
               <span className="eyebrow">PROGRESSO QUE VOCÊ PODE VER</span>
               <h1>
-                Cada passo deixa marca<span className="lime-text">.</span>
+                Cada passo deixa marca<span className="accent-text">.</span>
               </h1>
               <p>Sua jornada é maior que um número na balança.</p>
             </div>
@@ -947,13 +947,13 @@ export default function StudentExperience({
                       <XAxis
                         dataKey="data"
                         tickFormatter={shortDate}
-                        tick={{ fill: "#8f9695", fontSize: 11 }}
+                        tick={{ fill: "#969696", fontSize: 11 }}
                         tickLine={false}
                         axisLine={false}
                       />
                       <YAxis
                         domain={["auto", "auto"]}
-                        tick={{ fill: "#8f9695", fontSize: 11 }}
+                        tick={{ fill: "#969696", fontSize: 11 }}
                         tickLine={false}
                         axisLine={false}
                         width={40}
@@ -961,8 +961,8 @@ export default function StudentExperience({
                       <Tooltip
                         labelFormatter={shortDate}
                         contentStyle={{
-                          background: "#202724",
-                          border: "1px solid #35403a",
+                          background: "#1b1b1b",
+                          border: "1px solid #3e2b20",
                           borderRadius: 12,
                           color: "#fff",
                         }}
@@ -971,9 +971,9 @@ export default function StudentExperience({
                         type="monotone"
                         dataKey="peso"
                         name="Peso (kg)"
-                        stroke="#ceff5f"
+                        stroke="#ff6a00"
                         strokeWidth={3}
-                        dot={{ r: 4, fill: "#ceff5f" }}
+                        dot={{ r: 4, fill: "#ff6a00" }}
                       />
                     </LineChart>
                   </ResponsiveContainer>
@@ -1014,7 +1014,7 @@ export default function StudentExperience({
                         </small>
                         {e.payload.note && <p>{e.payload.note}</p>}
                       </div>
-                      <Pill tone="lime">Concluído</Pill>
+                      <Pill tone="accent">Concluído</Pill>
                     </div>
                   ))
               ) : (
@@ -1031,7 +1031,7 @@ export default function StudentExperience({
             <div className="page-title">
               <span className="eyebrow">ACOMPANHAMENTO DE PERTO</span>
               <h1>
-                Uma conversa faz diferença<span className="lime-text">.</span>
+                Uma conversa faz diferença<span className="accent-text">.</span>
               </h1>
               <p>
                 Seu canal direto com {profile.personalNome || "seu personal"}.
@@ -1113,7 +1113,7 @@ export default function StudentExperience({
             <div className="page-title">
               <span className="eyebrow">TUDO SOBRE SEU ACOMPANHAMENTO</span>
               <h1>
-                Seu plano, do seu jeito<span className="lime-text">.</span>
+                Seu plano, do seu jeito<span className="accent-text">.</span>
               </h1>
             </div>
             <div className="student-top-grid">
@@ -1210,7 +1210,7 @@ export default function StudentExperience({
                       </small>
                     </div>
                     <strong>{money(p.valor)}</strong>
-                    <Pill tone={p.status === "Pago" ? "lime" : "amber"}>
+                    <Pill tone={p.status === "Pago" ? "accent" : "amber"}>
                       {p.status}
                     </Pill>
                   </div>

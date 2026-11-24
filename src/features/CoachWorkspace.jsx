@@ -97,7 +97,7 @@ export function NewStudentForm({ profile, onCreate, onBack }) {
         <div>
           <span className="eyebrow">UMA NOVA HISTÓRIA COMEÇA AQUI</span>
           <h1>
-            Antes do treino, a pessoa<span className="lime-text">.</span>
+            Antes do treino, a pessoa<span className="accent-text">.</span>
           </h1>
           <p>
             Conheça o objetivo e prepare uma experiência com o nome do seu
@@ -217,7 +217,7 @@ export function NewStudentForm({ profile, onCreate, onBack }) {
           </form>
         </Panel>
         <Panel className="new-student-guide">
-          <span className="section-icon lime">
+          <span className="section-icon accent">
             <UserRound size={22} />
           </span>
           <span className="eyebrow">UM PAINEL PARA CHAMAR DE SEU</span>
@@ -276,7 +276,7 @@ function attentionFor(student, workouts, events) {
       detail: "Sem treino registrado há 7 dias.",
     };
   return {
-    tone: "lime",
+    tone: "accent",
     text: "Em movimento",
     detail: "Acompanhamento em dia.",
   };
@@ -308,7 +308,7 @@ export function CoachDashboard({ state, onNavigate, onStudent, onPreview }) {
     .reduce((sum, p) => sum + Number(p.valor || 0), 0);
   const needsAttention = active
     .map((s) => ({ student: s, ...attentionFor(s, workouts, events) }))
-    .filter((x) => x.tone !== "lime");
+    .filter((x) => x.tone !== "accent");
   const nextAgenda = [...agenda]
     .filter(
       (a) =>
@@ -328,7 +328,7 @@ export function CoachDashboard({ state, onNavigate, onStudent, onPreview }) {
             Bom ter você aqui,
             <br className="mobile-only" />{" "}
             {profile.personalNome?.split(" ")[0] || "personal"}
-            <span className="lime-text">.</span>
+            <span className="accent-text">.</span>
           </h1>
           <p>Por trás de cada número, uma pessoa evoluindo com você.</p>
         </div>
@@ -374,7 +374,7 @@ export function CoachDashboard({ state, onNavigate, onStudent, onPreview }) {
             value: active.length,
             detail: "Pessoas, objetivos e histórias",
             icon: Users,
-            tone: "lime",
+            tone: "accent",
           },
           {
             label: "Treinos nesta semana",
@@ -516,7 +516,7 @@ export function CoachDashboard({ state, onNavigate, onStudent, onPreview }) {
           <PanelHead
             eyebrow="MOVIMENTO DA SEMANA"
             title="Constância em tempo real"
-            action={<Pill tone="lime">{sessions.length} treinos</Pill>}
+            action={<Pill tone="accent">{sessions.length} treinos</Pill>}
           />
           <ResponsiveContainer width="100%" height={205}>
             <AreaChart data={chart}>
@@ -528,8 +528,8 @@ export function CoachDashboard({ state, onNavigate, onStudent, onPreview }) {
                   x2="0"
                   y2="1"
                 >
-                  <stop offset="0%" stopColor="#ceff5f" stopOpacity={0.22} />
-                  <stop offset="95%" stopColor="#ceff5f" stopOpacity={0} />
+                  <stop offset="0%" stopColor="#ff6a00" stopOpacity={0.22} />
+                  <stop offset="95%" stopColor="#ff6a00" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid stroke="#ffffff0b" vertical={false} />
@@ -537,19 +537,19 @@ export function CoachDashboard({ state, onNavigate, onStudent, onPreview }) {
                 dataKey="day"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#838d88", fontSize: 10 }}
+                tick={{ fill: "#8d8d8d", fontSize: 10 }}
               />
               <YAxis
                 allowDecimals={false}
                 width={25}
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#838d88", fontSize: 10 }}
+                tick={{ fill: "#8d8d8d", fontSize: 10 }}
               />
               <Tooltip
                 contentStyle={{
-                  background: "#202724",
-                  border: "1px solid #35403a",
+                  background: "#1b1b1b",
+                  border: "1px solid #3e2b20",
                   borderRadius: 12,
                   color: "#fff",
                 }}
@@ -558,7 +558,7 @@ export function CoachDashboard({ state, onNavigate, onStudent, onPreview }) {
                 type="monotone"
                 dataKey="treinos"
                 name="Treinos concluídos"
-                stroke="#ceff5f"
+                stroke="#ff6a00"
                 strokeWidth={3}
                 fill="url(#activityGradient)"
               />
@@ -627,7 +627,7 @@ export function CoachStudents({ state, onStudent, onPreview, onCreate }) {
         <div>
           <span className="eyebrow">NENHUMA JORNADA É IGUAL</span>
           <h1>
-            Seu time. Cada história<span className="lime-text">.</span>
+            Seu time. Cada história<span className="accent-text">.</span>
           </h1>
           <p>Um painel e uma estratégia para cada aluno.</p>
         </div>

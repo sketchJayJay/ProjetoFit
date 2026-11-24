@@ -1,0 +1,50 @@
+OTÁVIO GARCEZ PERSONAL — GITHUB + COOLIFY
+Versão 2.1 | Visual laranja e preto, com a logo enviada.
+
+1. SUBIR NO GITHUB
+Extraia este ZIP no seu computador.
+Abra o repositório ProjetoFit e escolha Add file > Upload files.
+Envie o CONTEÚDO da pasta extraída, mantendo as pastas src, public e supabase.
+O Dockerfile e package.json devem ficar na RAIZ do repositório.
+Conclua o upload com Commit changes na main.
+Não envie o arquivo ZIP fechado para dentro do repositório.
+
+2. BANCO DE DADOS
+Se JÁ usa o Supabase deste sistema: execute supabase/upgrade-v2.sql no SQL Editor.
+Se é um projeto NOVO: execute supabase/INSTALACAO_COMPLETA.sql no SQL Editor.
+Use o mesmo projeto e a mesma conta do personal para continuar com os registros existentes.
+Os identificadores da versão anterior foram preservados para compatibilidade.
+Não substitua um banco que já tem dados por outro projeto vazio.
+
+3. COOLIFY
+Build Pack: Dockerfile
+Dockerfile Location: /Dockerfile
+Porta interna: 80
+Domínio: o seu domínio, com HTTPS
+
+Adicione as duas variáveis abaixo e habilite o uso delas no BUILD:
+VITE_SUPABASE_URL=https://SEU-PROJETO.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=SUA_CHAVE_PUBLICA
+
+Pode usar a chave pública anon de um projeto Supabase antigo.
+Nunca use a chave service_role no front-end.
+As variáveis em runtime, sozinhas, não configuram um bundle Vite já compilado.
+Depois de configurar, faça Redeploy.
+Registros online ficam no Supabase. Não é necessário volume de dados no container.
+
+4. LOGIN E ALUNOS
+Em Authentication > URL Configuration no Supabase, configure o domínio publicado
+como Site URL e permita https://SEU-DOMINIO/** nas Redirect URLs.
+Entre/crie a conta do personal.
+Cadastre os alunos em Alunos e painéis.
+Em Personalizar e gerenciar acesso, ajuste as metas e gere o convite individual.
+Envie o link ao aluno, que cria sua própria senha usando o e-mail autorizado.
+Sem as variáveis Supabase, o aplicativo funciona somente como demonstração no navegador.
+
+5. O QUE ESTE PACOTE INCLUI
+Logo original, visual laranja/preto, painel do personal, painel individual do aluno,
+treinos com séries/cargas/descanso, metas semanais, evolução, check-ins, conversa,
+agenda, avaliações, financeiro, backup e instruções de atualização.
+Não inclui credenciais, senhas ou dados de produção.
+
+MAIS DETALHES: README.md
